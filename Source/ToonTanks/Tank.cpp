@@ -6,6 +6,7 @@
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 ATank::ATank()
@@ -17,15 +18,54 @@ ATank::ATank()
     Camera->SetupAttachment(SpringArm);
 }
 
+void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+    Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+    if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
+    {
+        EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATank::Move);
+        EnhancedInputComponent->BindAction(TurnAction, ETriggerEvent::Triggered, this, &ATank::Turn);
+    }
+}
+
+// Called every frame
+void ATank::Tick(float DeltaTime)
+{
+    Super::Tick(DeltaTime);
+
+    if (PlayerControllerRef)
+    {
+        FHitResult HitResult;
+
+        PlayerControllerRef->GetHitResultUnderCursor(
+            ECollisionChannel::ECC_Visibility,
+            false,
+            HitResult
+        );
+
+        DrawDebugSphere(
+            GetWorld(),
+            HitResult.ImpactPoint,
+            25.f,
+            12,
+            FColor::Red,
+            false,
+            -1.f
+        );
+    }
+
+}
+
 void ATank::BeginPlay()
 {
     Super::BeginPlay();
 
-    APlayerController* PlayerController = Cast<APlayerController>(GetController());
+    PlayerControllerRef = Cast<APlayerController>(GetController());
 
-    if (PlayerController)
+    if (PlayerControllerRef)
     {
-        if (UEnhancedInputLocalPlayerSubsystem* InputSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+        if (UEnhancedInputLocalPlayerSubsystem* InputSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerControllerRef->GetLocalPlayer()))
         {
             InputSystem->AddMappingContext(PlayerMappingContext, 0);
         }
@@ -35,19 +75,16 @@ void ATank::BeginPlay()
 void ATank::Move(const FInputActionValue& Value)
 {
     const float CurrentValue = Value.Get<float>();
-    FVector DeltaLocation(0.f);
-    DeltaLocation.X = CurrentValue;
-
-    AddActorLocalOffset(DeltaLocation);
+    FVector Location = FVector::ZeroVector;
+    Location.X = CurrentValue * Speed * UGameplayStatics::GetWorldDeltaSeconds(this);
+    AddActorLocalOffset(Location, true);
 }
 
-void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ATank::Turn(const FInputActionValue& Value)
 {
-    Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-    if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
-    {
-        EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATank::Move);
-    }
+    const float CurrentValue = Value.Get<float>();
+    FRotator Rotation = FRotator::ZeroRotator;
+    Rotation.Yaw = CurrentValue * TurnRate * UGameplayStatics::GetWorldDeltaSeconds(this);
+    AddActorLocalRotation(Rotation, true);
 }
 

@@ -27,10 +27,6 @@ public:
 	UPROPERTY(VisibleDefaultsOnly)
 	float VisibleDefaultOnly = 2;
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	class UCapsuleComponent* CapsuleComponent;
@@ -43,18 +39,5 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	USceneComponent* ProjectileSpawnPoint;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Super Duper Variables",meta = (AllowPrivateAccess = "true"))
-	int32 EditDefaultOnlyInt = 9;
-
-	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Super Duper Variables", meta = (AllowPrivateAccess = "true"))
-	int32 EditInstanceOnlyInt = 14;
-
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	// virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 };

@@ -18,6 +18,9 @@ class TOONTANKS_API ATank : public ABasePawn
 public:
 	ATank();
 
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
 private:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
@@ -27,7 +30,16 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	class UCameraComponent* Camera;
 
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float Speed = 500.f;
+	
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float TurnRate = 50.f;
+
+	APlayerController* PlayerControllerRef;
+
 protected:
+	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
@@ -36,5 +48,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	class UInputAction* MoveAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	class UInputAction* TurnAction;
+
 	void Move(const FInputActionValue& Value);
+
+	void Turn(const FInputActionValue& Value);
 };
