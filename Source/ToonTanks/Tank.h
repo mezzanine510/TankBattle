@@ -51,6 +51,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	class UInputAction* TurnAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	class UInputAction* FireAction;
+
 	void Move(const FInputActionValue& Value);
 
 	void Turn(const FInputActionValue& Value);
