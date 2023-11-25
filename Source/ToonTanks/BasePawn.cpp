@@ -5,6 +5,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Projectile.h"
+#include "Particles/ParticleSystem.h"
 
 // Sets default values
 ABasePawn::ABasePawn()
@@ -28,6 +29,10 @@ ABasePawn::ABasePawn()
 void ABasePawn::HandleDestruction()
 {
 	// TODO: Handle Visual and Sound FX
+	if (DeathExplosion)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DeathExplosion, GetActorTransform());
+	}
 }
 
 void ABasePawn::RotateTurret(FVector LookAtTarget)
