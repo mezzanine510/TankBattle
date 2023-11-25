@@ -30,8 +30,15 @@ void ATower::BeginPlay()
 
 void ATower::CheckFireCondition()
 {
-    // FireRateTimerHandle
-    if (InFireRange()) Fire();
+    if (Tank == nullptr)
+    {
+        return;
+    }
+    
+    if (InFireRange() && Tank->bAlive)
+    {
+        Fire();
+    }
 }
 
 bool ATower::InFireRange()

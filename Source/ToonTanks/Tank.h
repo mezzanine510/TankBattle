@@ -25,6 +25,8 @@ public:
 
 	APlayerController* GetTankPlayerController() const { return TankPlayerController; }
 
+	bool bAlive = true;
+
 private:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
