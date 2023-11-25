@@ -14,18 +14,8 @@ class TOONTANKS_API ABasePawn : public APawn
 public:
 	// Sets default values for this pawn's properties
 	ABasePawn();
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	int32 VisibleAnywhereInt = 12;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int32 EditAnywhereInt = 22;
-
-	UPROPERTY(VisibleInstanceOnly)
-	int32 VisibleInstanceOnly = 11;
-
-	UPROPERTY(VisibleDefaultsOnly)
-	float VisibleDefaultOnly = 2;
+	
+	void HandleDestruction();
 
 protected:
 	void RotateTurret(FVector LookAtTarget);
