@@ -28,10 +28,14 @@ ABasePawn::ABasePawn()
 
 void ABasePawn::HandleDestruction()
 {
-	// TODO: Handle Visual and Sound FX
 	if (DeathExplosion)
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DeathExplosion, GetActorTransform());
+	}
+
+	if (DeathSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation());
 	}
 }
 
