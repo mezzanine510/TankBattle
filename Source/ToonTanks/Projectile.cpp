@@ -9,7 +9,7 @@
 // Sets default values
 AProjectile::AProjectile()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
 	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Projectile Mesh"));
@@ -17,14 +17,14 @@ AProjectile::AProjectile()
 
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement Component"));
 	ProjectileMovementComponent->InitialSpeed = 1300.f;
-	ProjectileMovementComponent->MaxSpeed= 1300.f;
+	ProjectileMovementComponent->MaxSpeed = 1300.f;
 }
 
 // Called when the game starts or when spawned
 void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	ProjectileMesh->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
 }
 
@@ -39,17 +39,26 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimi
 {
 	auto ProjectileOwner = GetOwner();
 
-	if (
-		ProjectileOwner == nullptr || 
-		!OtherActor || 
-		OtherActor == this || 
+	if (ProjectileOwner == nullptr ||
+		!OtherActor ||
+		OtherActor == this ||
 		OtherActor == ProjectileOwner
-		) return;
+		)
+	{
+		Destroy();
+		return;
+	}
 
 	auto ProjectileInstigator = ProjectileOwner->GetInstigatorController();
 	auto DamageTypeClass = UDamageType::StaticClass();
 
 	UGameplayStatics::ApplyDamage(OtherActor, Damage, ProjectileInstigator, this, DamageTypeClass);
+	
+	if (HitParticles)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(this, HitParticles, Hit.ImpactPoint, Hit.ImpactNormal.Rotation());
+	}
+
 	Destroy();
 }
 
